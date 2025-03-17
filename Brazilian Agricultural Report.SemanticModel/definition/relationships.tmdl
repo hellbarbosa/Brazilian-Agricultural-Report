@@ -1,0 +1,4 @@
+relationship 0efdd88b-a355-0658-f248-04e8b32b8fd2
+	fromColumn: 'Fact Cattle'.Date
+	toColumn: Date.Date
+

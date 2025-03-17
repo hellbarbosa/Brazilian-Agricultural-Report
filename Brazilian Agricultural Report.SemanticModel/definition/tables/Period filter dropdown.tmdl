@@ -1,0 +1,25 @@
+table 'Period filter dropdown'
+	lineageTag: f53e49ae-9cd7-44b9-ac29-d33c24ffcf80
+
+	measure 'Selected Period' = SELECTEDVALUE('Period filter dropdown'[Period name])
+		lineageTag: fc42ccd2-7a0b-4cf9-9b2c-979e9b75aadb
+
+	column 'Period name'
+		dataType: string
+		lineageTag: 339d7935-0bc5-4aa9-a086-ce7a554ec80b
+		summarizeBy: none
+		sourceColumn: Period name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Period filter dropdown' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45W8kksSS0uUcjNzyvJUIrViVYKycgsVigsTSwqSS1CCFSmJgJ5sQA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Period name" = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Period name", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

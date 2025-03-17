@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Brazilian Agricultural Report"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1d7b93d0-899d-482e-918d-7600f3fab6a4"
+  }
+}

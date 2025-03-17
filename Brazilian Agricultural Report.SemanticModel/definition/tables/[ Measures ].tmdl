@@ -1,0 +1,761 @@
+table '[ Measures ]'
+	lineageTag: b5fde0e8-8305-4e39-8cf3-5ae8cdf84aee
+
+	measure 'Blank Placehodler' = BLANK()
+		formatString: 0
+		displayFolder: Auxiliary
+		lineageTag: 082a0525-0c46-4a81-a077-66b5d9123a8c
+
+	measure 'Total Heads' = ```
+			
+			-- Sum of total slaughtered heads
+			
+			VAR _Result = 
+			    CALCULATE ( SUM ( 'Fact Cattle'[Valor] ) )
+			    
+			RETURN
+			_Result
+			```
+		formatString: #,0
+		displayFolder: Cattle
+		lineageTag: c5adc866-6f1d-47eb-8b7b-b02eaa25d96f
+
+	measure 'YTD Total Heads' = ```
+			
+			CALCULATE (
+			    [Total Heads],
+			    DATESYTD('Fact Cattle'[Date])
+			)
+			
+			```
+		formatString: #,0
+		displayFolder: Time intelligence\To-date total\Cattle\Total Heads
+		lineageTag: 6d5a6cf2-bea0-4143-a15a-0ea376eaf841
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QTD Total Heads' =
+			
+			CALCULATE (
+			    [Total Heads],
+			    DATESQTD('Fact Cattle'[Date])
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\To-date total\Cattle\Total Heads
+		lineageTag: 1daad497-b63a-488c-a968-a757d3132213
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MTD Total Heads' =
+			
+			CALCULATE (
+			    [Total Heads],
+			    DATESMTD('Fact Cattle'[Date])
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\To-date total\Cattle\Total Heads
+		lineageTag: a20b3fd0-d521-49b3-b05d-31b3990e6964
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PY Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        CALCULATETABLE (
+			            DATEADD ( 'Date'[Date], -1, YEAR ),
+			            'Date'[DateWithTransactions] = TRUE
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: aa75cee2-e918-45a3-aa61-8e6b329e21b0
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'YOY Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [Total Heads]
+			VAR __ValuePreviousPeriod = [PY Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: 8cc8bf3e-2066-431d-abfb-92dbd6d30c99
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'YOY % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [YOY Total Heads],
+			    [PY Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: 1c811c98-1619-4cee-ac47-97f6a50f8e1e
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PQ Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        CALCULATETABLE (
+			            DATEADD ( 'Date'[Date], -1, QUARTER ),
+			            'Date'[DateWithTransactions] = TRUE
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: 21c8682b-12d6-4eaf-a4d5-f313b0f1561d
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QOQ Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [Total Heads]
+			VAR __ValuePreviousPeriod = [PQ Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: d4d58103-d47f-4b6e-84c6-15ac5ac734ab
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QOQ % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [QOQ Total Heads],
+			    [PQ Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: 0626e059-ece6-4121-ae38-1ea0f056e138
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PM Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        CALCULATETABLE (
+			            DATEADD ( 'Date'[Date], -1, MONTH ),
+			            'Date'[DateWithTransactions] = TRUE
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: f469c87c-e74e-4857-86b5-a323567f21dd
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MOM Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [Total Heads]
+			VAR __ValuePreviousPeriod = [PM Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: 9f3f3b61-c521-4713-a3dd-6467b5f10517
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MOM % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [MOM Total Heads],
+			    [PM Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Growth\Cattle\Total Heads
+		lineageTag: 3192acf3-dc53-43f5-b479-0c5d6ebf50a0
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PYTD Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [YTD Total Heads],
+			        CALCULATETABLE (
+			            DATEADD ( 'Date'[Date], -1, YEAR ),
+			            'Date'[DateWithTransactions] = TRUE
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: 4f997179-c224-4794-9472-e79936775aa0
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'YOYTD Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [YTD Total Heads]
+			VAR __ValuePreviousPeriod = [PYTD Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: 73fb25d1-cbca-4fa1-838b-22cdfef9e18a
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'YOYTD % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [YOYTD Total Heads],
+			    [PYTD Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: b94a77b6-ac50-45fe-bd75-154903d8070c
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PQTD Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [QTD Total Heads],
+			        CALCULATETABLE (
+			            DATEADD ( 'Date'[Date], -1, QUARTER ),
+			            'Date'[DateWithTransactions] = TRUE
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: fcb2232c-f85f-4e6c-952f-8a1a3bc4416b
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QOQTD Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [QTD Total Heads]
+			VAR __ValuePreviousPeriod = [PQTD Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: 86287872-90d1-4689-a634-c60341d4160b
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QOQTD % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [QOQTD Total Heads],
+			    [PQTD Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: 1fb55ce6-ddb2-4556-b652-f2ec6108340f
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PMTD Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [MTD Total Heads],
+			        CALCULATETABLE (
+			            DATEADD ( 'Date'[Date], -1, MONTH ),
+			            'Date'[DateWithTransactions] = TRUE
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: fc9376ae-1c9b-408a-a7ca-297f0008907c
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MOMTD Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [MTD Total Heads]
+			VAR __ValuePreviousPeriod = [PMTD Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: 1699bfcd-e8a2-4c0e-8152-0af98efc6f06
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MOMTD % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [MOMTD Total Heads],
+			    [PMTD Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\To-date growth\Cattle\Total Heads
+		lineageTag: 377f494d-dd88-41bd-a554-8f6d3c7fe7fc
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PYC Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        PARALLELPERIOD ( 'Date'[Date], -1, YEAR )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: a8bb55a1-93d4-4fce-8622-789a841cf011
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'YTDOPY Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [YTD Total Heads]
+			VAR __ValuePreviousPeriod = [PYC Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: e6b47b36-0ec2-4ac1-8731-1ce5949e9334
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'YDTOPY % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [YTDOPY Total Heads],
+			    [PYC Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: eb42f0bc-b633-46d7-be34-3fc42dcd879d
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PQC Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        PARALLELPERIOD ( 'Date'[Date], -1, QUARTER )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: d2ee3535-7e5d-4314-9d03-56835e022460
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QTDOPQ Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [QTD Total Heads]
+			VAR __ValuePreviousPeriod = [PQC Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: 7ed7c2fe-1044-42c3-b042-9773d6da477c
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'QDTOPQ % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [QTDOPQ Total Heads],
+			    [PQC Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: 050e9836-dd3b-49d7-872d-1f824e3e9a45
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PMC Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        PARALLELPERIOD ( 'Date'[Date], -1, MONTH )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: 5a495737-5d4a-49b7-b11f-ae1015979592
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MTDOPM Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [MTD Total Heads]
+			VAR __ValuePreviousPeriod = [PMC Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: d17e7ad9-ef87-4d1e-aad4-0c471ba09ac6
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MTDOPM % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [MTDOPM Total Heads],
+			    [PMC Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Growth over full period\Cattle\Total Heads
+		lineageTag: b61eba3a-8704-41e7-9076-72a917276a32
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MAT Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [Total Heads],
+			        DATESINPERIOD (
+			            'Date'[Date],
+			            MAX ( 'Date'[Date] ),
+			            -1,
+			            YEAR
+			        )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Moving annual growth\Cattle\Total Heads
+		lineageTag: 40950cfb-9635-484d-9734-e4a5d42fa45f
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'PYMAT Total Heads' =
+			
+			IF (
+			    [_ShowValueForDates],
+			    CALCULATE (
+			        [MAT Total Heads],
+			        DATEADD ( 'Date'[Date], -1, YEAR )
+			    )
+			)
+		formatString: #,0
+		displayFolder: Time intelligence\Moving annual growth\Cattle\Total Heads
+		lineageTag: 5f2d5bec-c8d5-40a5-8dd0-15c42f35224f
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MATG Total Heads' =
+			
+			VAR __ValueCurrentPeriod = [MAT Total Heads]
+			VAR __ValuePreviousPeriod = [PYMAT Total Heads]
+			VAR __Result =
+			    IF (
+			        NOT ISBLANK ( __ValueCurrentPeriod ) && NOT ISBLANK ( __ValuePreviousPeriod ),
+			        __ValueCurrentPeriod - __ValuePreviousPeriod
+			    )
+			RETURN
+			    __Result
+		formatString: #,0
+		displayFolder: Time intelligence\Moving annual growth\Cattle\Total Heads
+		lineageTag: dfa8f176-2a1a-4fc7-a905-feae4196f746
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'MATG % Total Heads' = ```
+			
+			DIVIDE ( 
+			    [MATG Total Heads],
+			    [PYMAT Total Heads]
+			)
+			```
+		formatString: 0.00%
+		displayFolder: Time intelligence\Moving annual growth\Cattle\Total Heads
+		lineageTag: 08b1b16d-7b4f-4551-8a91-ccaf3d51fab8
+
+		annotation SQLBI_Template = TimeIntelligence
+
+		annotation SQLBI_TimeIntelligence = Standard
+
+		annotation SQLBI_CalendarType = Calendar
+
+	measure 'Prior Month Placeholder' = "vs mes anterior : ‎"
+		displayFolder: Auxiliary
+		lineageTag: a87425ee-ad20-47b4-af7f-f32e3745a67c
+
+	measure 'Bar Chart Placeholder' = 0
+		formatString: 0
+		displayFolder: Auxiliary
+		lineageTag: a63bedb3-af16-44e5-ac98-38356a9b6d01
+
+	measure 'Bar Chart Label - UF name' = SELECTEDVALUE('Fact Cattle'[UF nome])
+		displayFolder: Auxiliary
+		lineageTag: dd7bcf5b-413e-4421-9e8b-933272755bc9
+
+	measure 'Bar Chart Color Hightlight' = ```
+			
+			VAR _TopUF =
+			    TOPN(
+			        1, 
+			        SUMMARIZE(
+			            'Fact Cattle', 
+			            'Fact Cattle'[UF nome], 
+			            "@Valor", SUM('Fact Cattle'[Valor]) 
+			        ),
+			        [@Valor], 
+			        DESC 
+			    ) -- Identifies the top 1 UF name
+			
+			VAR _UFNome = 
+			    MAXX(_TopUF, [UF nome]) -- Extract the UF name from above table
+			
+			VAR _SelectedValue = SELECTEDVALUE('Fact Cattle'[UF nome]) -- Adds row context
+			VAR _Color = 
+			    IF( 
+			        _SelectedValue = "Bahia", 
+			        "#118DFF", -- blue 
+			        "#E6E6E6" -- grey
+			    )
+			
+			RETURN
+			_Color
+			```
+		displayFolder: Auxiliary
+		lineageTag: 6575ebe4-e00e-41fa-a311-5260da12fc23
+
+	measure 'Total Heads Dynamic Value' = ```
+			
+			-- Calculates the value based on the period selected by the user
+			VAR _SelectedDropdown = SELECTEDVALUE('Period filter dropdown'[Period name])
+			VAR _Result = 
+			SWITCH(
+			    TRUE(),
+			    _SelectedDropdown = "This year", [YTD Total Heads],
+			    _SelectedDropdown = "This quarter", [QTD Total Heads],
+			    _SelectedDropdown = "Latest month", [MTD Total Heads],
+			    BLANK()
+			)
+			RETURN
+			_Result
+			```
+		formatString: 0
+		displayFolder: Cattle
+		lineageTag: 810b46e8-c079-4f67-bb34-3f7ee3c92c24
+
+	partition '[ Measures ]' = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

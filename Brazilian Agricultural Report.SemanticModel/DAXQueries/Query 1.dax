@@ -1,0 +1,14 @@
+EVALUATE
+VAR TopProduct =
+    TOPN(
+        1, -- Get the top 1 row
+        SUMMARIZE(
+            'Fact Cattle', -- Replace with your actual table name
+            'Fact Cattle'[UF nome], -- Group by ProductName
+            "TotalSales", SUM('Fact Cattle'[Valor]) -- Calculate total sales for each product
+        ),
+        [TotalSales], -- Order by the calculated TotalSales column
+        DESC -- Sort in descending order
+    )
+RETURN
+    {MAXX(TopProduct, [UF nome])} -- Extract the ProductName from the top result

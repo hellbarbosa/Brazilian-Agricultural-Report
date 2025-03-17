@@ -1,0 +1,199 @@
+table 'Fact Cattle'
+	lineageTag: 912de51a-3808-4a35-904f-649e6d20449c
+
+	column 'Nível Territorial (Código)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 4db9d06f-d0ec-438a-beaf-4c563f4e7409
+		summarizeBy: sum
+		sourceColumn: Nível Territorial (Código)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nível Territorial'
+		dataType: string
+		lineageTag: e9bc2ed6-9dfd-4a35-b8cf-4c75ec2104ec
+		summarizeBy: none
+		sourceColumn: Nível Territorial
+
+		annotation SummarizationSetBy = Automatic
+
+	column Valor
+		dataType: int64
+		formatString: #,0
+		lineageTag: 8e7660e9-cc5d-4cb1-ad03-dc6bb1642ca1
+		summarizeBy: sum
+		sourceColumn: Valor
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UF codigo'
+		dataType: int64
+		formatString: 0
+		lineageTag: 188b2289-e3f7-4a0b-848f-844385bb64bf
+		summarizeBy: sum
+		sourceColumn: UF codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UF nome'
+		dataType: string
+		lineageTag: c4b63c20-1ad9-4c50-954d-76ecb9204665
+		summarizeBy: none
+		sourceColumn: UF nome
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Trimestre Numero'
+		dataType: int64
+		formatString: 0
+		lineageTag: 378ccafe-6f5e-491c-9629-ad576e5ea21d
+		summarizeBy: sum
+		sourceColumn: Trimestre Numero
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Trimestre Nome longo'
+		dataType: string
+		lineageTag: 8b5ad14e-d14a-4725-8749-43798dc87817
+		summarizeBy: none
+		sourceColumn: Trimestre Nome longo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Referência temporal (Código)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 08de236d-3efd-419c-a2b6-9aba7e631285
+		summarizeBy: sum
+		sourceColumn: Referência temporal (Código)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Referência temporal'
+		dataType: string
+		lineageTag: a08cbcf1-42a0-48a3-b857-89e3ff784ab5
+		summarizeBy: none
+		sourceColumn: Referência temporal
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo Rebanho Codigo'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a6dd0a6-99e3-4b52-bb0c-ffd4461b39de
+		summarizeBy: sum
+		sourceColumn: Tipo Rebanho Codigo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tipo Rebanho Nome'
+		dataType: string
+		lineageTag: 37ba0d1a-fa24-47f6-b553-6d0c300d1d19
+		summarizeBy: none
+		sourceColumn: Tipo Rebanho Nome
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 8da89e65-3b35-4273-83c9-01dd20358540
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 04d6553c-695d-4dc0-8e5b-015718d16ac1
+		summarizeBy: sum
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month = ```
+			
+			-- Adds year number based on quarter number and [Referencia Temporal] field
+			VAR _Quarter = 'Fact Cattle'[Quarter]
+			VAR _ReferenciaTemporal = 'Fact Cattle'[Referência temporal]
+			VAR _Reference = 
+			    RIGHT(LEFT(_ReferenciaTemporal, 4),1)
+			VAR _Result = 
+			    SWITCH(
+			        TRUE(),
+			        -- 1st quarter block
+			        _Quarter = 1 && _Reference = "1", 1,
+			        _Quarter = 1 && _Reference = "2", 2,
+			        _Quarter = 1 && _Reference = "3", 3,
+			        -- 2nd quarter block
+			        _Quarter = 2 && _Reference = "1", 4,
+			        _Quarter = 2 && _Reference = "2", 5,
+			        _Quarter = 2 && _Reference = "3", 6,
+			        -- 3rd quarter block
+			        _Quarter = 3 && _Reference = "1", 7,
+			        _Quarter = 3 && _Reference = "2", 8,
+			        _Quarter = 3 && _Reference = "3", 9,
+			        -- 4th quarter block
+			        _Quarter = 4 && _Reference = "1", 10,
+			        _Quarter = 4 && _Reference = "2", 11,
+			        _Quarter = 4 && _Reference = "3", 12,                
+			        BLANK()   
+			    )
+			RETURN
+			_Result
+			
+			```
+		formatString: 0
+		lineageTag: 1249c529-2cdc-41b4-809f-03df504026e9
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date = ```
+			
+			DATE(
+			    [Year], 
+			    [Month], 
+			    1
+			)
+			```
+		formatString: m/d/yyyy
+		lineageTag: a263118a-128d-41a9-a50a-34a0566cd571
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition 'Fact Cattle' = m
+		mode: import
+		source =
+				let
+				    Source = Json.Document(Web.Contents("https://apisidra.ibge.gov.br/values/t/1092/n1/all/n3/all/v/284/p/last%205/c12716/allxt/c18/55,56,992,111734,111735/c12529/111738")),
+				    #"Converted to Table" = Table.FromList(Source, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+				    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table", "Column1", {"NC", "NN", "MC", "MN", "V", "D1C", "D1N", "D2C", "D2N", "D3C", "D3N", "D4C", "D4N", "D5C", "D5N", "D6C", "D6N"}, {"NC", "NN", "MC", "MN", "V", "D1C", "D1N", "D2C", "D2N", "D3C", "D3N", "D4C", "D4N", "D5C", "D5N", "D6C", "D6N"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Expanded Column1",{{"NC", type text}, {"NN", type text}, {"MC", type text}, {"MN", type text}, {"V", type text}, {"D1C", type text}, {"D1N", type text}, {"D2C", type text}, {"D2N", type text}, {"D3C", type text}, {"D3N", type text}, {"D4C", type text}, {"D4N", type text}, {"D5C", type text}, {"D5N", type text}, {"D6C", type text}, {"D6N", type text}}),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Changed Type", [PromoteAllScalars=true]),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Promoted Headers",{{"Nível Territorial (Código)", Int64.Type}, {"Nível Territorial", type text}, {"Unidade de Medida (Código)", Int64.Type}, {"Unidade de Medida", type text}, {"Valor", type text}, {"Brasil e Unidade da Federação (Código)", Int64.Type}, {"Brasil e Unidade da Federação", type text}, {"Variável (Código)", Int64.Type}, {"Variável", type text}, {"Trimestre (Código)", Int64.Type}, {"Trimestre", type text}, {"Referência temporal (Código)", Int64.Type}, {"Referência temporal", type text}, {"Tipo de rebanho bovino (Código)", Int64.Type}, {"Tipo de rebanho bovino", type text}, {"Tipo de inspeção (Código)", Int64.Type}, {"Tipo de inspeção", type text}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Changed Type1", each ([#"Nível Territorial (Código)"] = 3)),
+				    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows",{"Unidade de Medida (Código)", "Unidade de Medida"}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Removed Columns","X","",Replacer.ReplaceText,{"Valor"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","-","",Replacer.ReplaceText,{"Valor"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Replaced Value1",{{"Brasil e Unidade da Federação (Código)", "UF codigo"}, {"Brasil e Unidade da Federação", "UF nome"}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Renamed Columns",{"Variável (Código)", "Variável"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Removed Columns1",{{"Trimestre (Código)", "Trimestre Numero"}, {"Trimestre", "Trimestre Nome longo"}, {"Tipo de rebanho bovino (Código)", "Tipo Rebanho Codigo"}, {"Tipo de rebanho bovino", "Tipo Rebanho Nome"}}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Renamed Columns1",{"Tipo de inspeção (Código)", "Tipo de inspeção"}),
+				    #"Added Custom" = Table.AddColumn(#"Removed Columns2", "Ano", each Text.Start(Text.From([Trimestre Numero]), 4)),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Added Custom",{{"Ano", Int64.Type}}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Changed Type2",{{"Ano", "Year"}}),
+				    #"Added Custom1" = Table.AddColumn(#"Renamed Columns2", "Quarter", each Text.Start([Trimestre Nome longo], 1)),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Added Custom1",{{"Quarter", Int64.Type}, {"Valor", Int64.Type}})
+				in
+				    #"Changed Type3"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

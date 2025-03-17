@@ -1,0 +1,87 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 32,
+            "y": 99
+          },
+          "nodeIndex": "Date",
+          "nodeLineageTag": "d7ae5927-35f7-48df-8c57-f7e086b29259",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 32,
+            "y": 438
+          },
+          "nodeIndex": "DateAutoTemplate",
+          "nodeLineageTag": "5bf41a6f-78b7-4af0-83cf-880a623b330a",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 737,
+            "y": 208
+          },
+          "nodeIndex": "[ Measures ]",
+          "nodeLineageTag": "b5fde0e8-8305-4e39-8cf3-5ae8cdf84aee",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 437,
+            "y": 170
+          },
+          "nodeIndex": "Fact Cattle",
+          "nodeLineageTag": "912de51a-3808-4a35-904f-649e6d20449c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 989,
+            "y": 300.5
+          },
+          "nodeIndex": "Period filter dropdown",
+          "nodeLineageTag": "f53e49ae-9cd7-44b9-ac29-d33c24ffcf80",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}
